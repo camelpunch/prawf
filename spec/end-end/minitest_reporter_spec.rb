@@ -17,16 +17,12 @@ describe "Prawf's minitest reporter" do
   end
 
   it "displays output nicely" do
-    system('ruby spec/end-end/fixtures/examplespec.rb')
-    lines = File.read(output.path).lines.to_a
+    system('ruby spec/end-end/fixtures/examplespec.rb --seed=1234')
+    File.read(output.path).must_equal <<-OUTPUT
+My Class
 
-    lines[0..1].must_equal [
-      "My Class\n",
-      "\n"
-    ]
-    lines[2..3].sort.must_equal [
-      "✔ is awesome\n",
-      "✘ can fail\n",
-    ]
+✔ is awesome
+✘ can fail
+    OUTPUT
   end
 end

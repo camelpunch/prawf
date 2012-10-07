@@ -3,50 +3,51 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/prawf/parser'
 
 describe Prawf::Parser do
+  attr_reader :pipe_output, :pipe_input
+
+  before do
+    @pipe_output, @pipe_input = IO.pipe
+  end
+
+  let(:parser) { Prawf::Parser.new(pipe_input) }
+  let(:output) { pipe_input.close; pipe_output.read }
+
+  def parse(attributes)
+    parser.parse JSON.generate(attributes)
+  end
+
   it "outputs the first before-test as a suite heading" do
-    output, input = IO.pipe
-    parser = Prawf::Parser.new(input)
     2.times do
-      parser.parse JSON.generate(
+      parse(
         stage: 'before_test',
         suite: 'some suite',
         test: 'a test'
       )
     end
-    input.close
-
-    output.read.must_equal <<-OUTPUT
+    output.must_equal <<-OUTPUT
 some suite
 
     OUTPUT
   end
 
   it "outputs a pass" do
-    output, input = IO.pipe
-    parser = Prawf::Parser.new(input)
-    parser.parse JSON.generate(
+    parse(
       stage: 'pass',
       suite: 'some suite',
       test: 'a test'
     )
-    input.close
-
-    output.read.must_equal <<-OUTPUT
+    output.must_equal <<-OUTPUT
 ✔ a test
     OUTPUT
   end
 
   it "outputs a failure" do
-    output, input = IO.pipe
-    parser = Prawf::Parser.new(input)
-    parser.parse JSON.generate(
+    parse(
       stage: 'failure',
       suite: 'flaky suite',
       test: 'a failed test'
     )
-    input.close
-
-    output.read.must_equal <<-OUTPUT
+    output.must_equal <<-OUTPUT
 ✘ a failed test
     OUTPUT
   end
