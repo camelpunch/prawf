@@ -8,7 +8,8 @@ describe "Prawf's minitest reporter" do
   before do
     File.unlink '/tmp/prawfpipe' rescue nil
     @pid = Process.spawn('bin/prawf /tmp/prawfpipe',
-                         :out => output.path)
+                         :out => output.path,
+                         :err => output.path)
   end
 
   after do

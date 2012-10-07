@@ -2,6 +2,7 @@
 gem 'minitest'
 require 'minitest/spec'
 require 'minitest/reporters'
+require 'json'
 
 class Prawf
   class MiniTestReporter
@@ -11,9 +12,12 @@ class Prawf
       @output = output
     end
 
-    def before_test(suite, test)
-      test_name = test.sub(/^test_[0-9]+_/, '')
-      @output.puts "#{suite}\n\n✓ #{test_name}"
+    def before_test(suite_name, test_name)
+      @output.puts JSON.generate(
+        stage: 'before_test',
+        suite: suite_name,
+        test: test_name.sub(/^test_[0-9]+_/, '')
+      )
     end
   end
 end

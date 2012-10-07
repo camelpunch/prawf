@@ -1,12 +1,18 @@
 #!/usr/bin/env ruby
 # coding: utf-8
+require 'json'
 
 pipe_path = ARGV[0]
 `mkfifo #{pipe_path}` unless File.exists?(pipe_path)
 
 File.open pipe_path, 'r+' do |pipe|
   loop do
-    $stdout.puts pipe.gets
+    json = pipe.gets
+    attributes = JSON.parse(json)
+
+    $stdout.puts attributes['suite']
+    $stdout.puts
+    $stdout.puts "✓ #{attributes['test']}"
     $stdout.flush
   end
 end
