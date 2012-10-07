@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+
+pipe_path = ARGV[0]
+`mkfifo #{pipe_path}` unless File.exists?(pipe_path)
+
+File.open pipe_path, 'r' do |pipe|
+  loop do
+    line = pipe.gets
+    puts line
+  end
+end
+
