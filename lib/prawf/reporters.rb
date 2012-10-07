@@ -16,13 +16,13 @@ module Prawf
       report 'before_test', suite_name, test_name
     end
 
-    # def pass(suite_name, test_name, test_runner)
-      # report 'pass', suite_name, test_name
-    # end
+    def pass(suite_name, test_name, test_runner)
+      report 'pass', suite_name, test_name
+    end
 
-    # def failure(suite_name, test_name, test_runner)
-      # report 'failure', suite_name, test_name
-    # end
+    def failure(suite_name, test_name, test_runner)
+      report 'failure', suite_name, test_name
+    end
 
     private
 

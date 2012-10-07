@@ -13,7 +13,7 @@ describe "My Class" do
     true.must_equal true
   end
 
-  # it "can fail" do
-    # true.must_equal false
-  # end
+  it "can fail" do
+    true.must_equal false
+  end
 end

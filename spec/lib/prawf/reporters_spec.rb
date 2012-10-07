@@ -19,37 +19,37 @@ describe Prawf::MiniTestReporter do
     output.gets.must_equal "#{expected_json}\n"
   end
 
-  # it "writes passed test data" do
-    # unused_test_runner = nil
+  it "writes passed test data" do
+    unused_test_runner = nil
 
-    # output, input = IO.pipe
-    # reporter = Prawf::MiniTestReporter.new(input)
-    # reporter.pass('my suite', 'my test', unused_test_runner)
-    # input.close
+    output, input = IO.pipe
+    reporter = Prawf::MiniTestReporter.new(input)
+    reporter.pass('my suite', 'my test', unused_test_runner)
+    input.close
 
-    # expected_json = JSON.generate(
-      # stage: 'pass',
-      # suite: 'my suite',
-      # test: 'my test'
-    # )
+    expected_json = JSON.generate(
+      stage: 'pass',
+      suite: 'my suite',
+      test: 'my test'
+    )
 
-    # output.gets.must_equal "#{expected_json}\n"
-  # end
+    output.gets.must_equal "#{expected_json}\n"
+  end
 
-  # it "writes failed test data" do
-    # unused_test_runner = nil
+  it "writes failed test data" do
+    unused_test_runner = nil
 
-    # output, input = IO.pipe
-    # reporter = Prawf::MiniTestReporter.new(input)
-    # reporter.failure('my suite', 'my test', unused_test_runner)
-    # input.close
+    output, input = IO.pipe
+    reporter = Prawf::MiniTestReporter.new(input)
+    reporter.failure('my suite', 'my test', unused_test_runner)
+    input.close
 
-    # expected_json = JSON.generate(
-      # stage: 'failure',
-      # suite: 'my suite',
-      # test: 'my test'
-    # )
+    expected_json = JSON.generate(
+      stage: 'failure',
+      suite: 'my suite',
+      test: 'my test'
+    )
 
-    # output.gets.must_equal "#{expected_json}\n"
-  # end
+    output.gets.must_equal "#{expected_json}\n"
+  end
 end
