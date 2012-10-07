@@ -22,7 +22,8 @@ describe "Prawf's minitest reporter" do
     File.read(output.path).must_equal <<-OUTPUT
 My Class
 
-✓ is awesome
+✔ is awesome
     OUTPUT
+# ✘ can fail
   end
 end

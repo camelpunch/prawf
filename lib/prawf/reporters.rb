@@ -4,7 +4,7 @@ require 'minitest/spec'
 require 'minitest/reporters'
 require 'json'
 
-class Prawf
+module Prawf
   class MiniTestReporter
     include MiniTest::Reporter
 
@@ -13,8 +13,22 @@ class Prawf
     end
 
     def before_test(suite_name, test_name)
+      report 'before_test', suite_name, test_name
+    end
+
+    # def pass(suite_name, test_name, test_runner)
+      # report 'pass', suite_name, test_name
+    # end
+
+    # def failure(suite_name, test_name, test_runner)
+      # report 'failure', suite_name, test_name
+    # end
+
+    private
+
+    def report(event, suite_name, test_name)
       @output.puts JSON.generate(
-        stage: 'before_test',
+        stage: event,
         suite: suite_name,
         test: test_name.sub(/^test_[0-9]+_/, '')
       )

@@ -12,4 +12,8 @@ describe "My Class" do
   it "is awesome" do
     true.must_equal true
   end
+
+  # it "can fail" do
+    # true.must_equal false
+  # end
 end
