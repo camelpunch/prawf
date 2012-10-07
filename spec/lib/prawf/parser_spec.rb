@@ -12,43 +12,62 @@ describe Prawf::Parser do
   let(:parser) { Prawf::Parser.new(pipe_input) }
   let(:output) { pipe_input.close; pipe_output.read }
 
+  let(:reset) {
+    cr = "\r"
+    clear = "\e[0K"
+    cr + clear
+  }
+
   def parse(attributes)
     parser.parse JSON.generate(attributes)
   end
 
-  it "outputs the first before-test as a suite heading" do
-    2.times do
-      parse(
-        stage: 'before_test',
-        suite: 'some suite',
-        test: 'a test'
-      )
-    end
-    output.must_equal <<-OUTPUT
-some suite
-
-    OUTPUT
-  end
-
   it "outputs a pass" do
-    parse(
-      stage: 'pass',
-      suite: 'some suite',
-      test: 'a test'
-    )
+    parse(stage: 'before_test',
+          suite: 'a suite',
+          test: 'a test')
+    parse(stage: 'pass',
+          suite: 'a suite',
+          test: 'a test')
     output.must_equal <<-OUTPUT
-✔ a test
+a suite
+
+* a test#{reset}✔ a test
     OUTPUT
   end
 
   it "outputs a failure" do
-    parse(
-      stage: 'failure',
-      suite: 'flaky suite',
-      test: 'a failed test'
-    )
+    parse(stage: 'before_test',
+          suite: 'flaky suite',
+          test: 'a failed test')
+    parse(stage: 'failure',
+          suite: 'flaky suite',
+          test: 'a failed test')
     output.must_equal <<-OUTPUT
-✘ a failed test
+flaky suite
+
+* a failed test#{reset}✘ a failed test
+    OUTPUT
+  end
+
+  it "outputs a failure after a pass" do
+    parse(stage: 'before_test',
+          suite: 'flaky suite',
+          test: 'a passing test')
+    parse(stage: 'pass',
+          suite: 'flaky suite',
+          test: 'a passing test')
+    parse(stage: 'before_test',
+          suite: 'flaky suite',
+          test: 'a failed test')
+    parse(stage: 'failure',
+          suite: 'flaky suite',
+          test: 'a failed test')
+    output.must_equal <<-OUTPUT
+flaky suite
+
+* a passing test#{reset}✔ a passing test
+* a failed test#{reset}✘ a failed test
     OUTPUT
   end
 end

@@ -5,35 +5,53 @@ module Prawf
   class Parser
     def initialize(output)
       @output = output
+      @summarized_suites = Set.new
     end
 
     def parse(line)
       attributes = JSON.parse(line)
-      event = attributes.delete 'stage'
-      send event, attributes
+      send attributes.delete('stage'), attributes
       @output.flush
     end
 
     private
 
-    def suites
-      @suites ||= Set.new
-    end
-
     def before_test(attributes)
-      unless suites.include?(attributes['suite'])
-        @output.puts attributes['suite']
-        @output.puts
-        suites << attributes['suite']
-      end
+      summarize attributes['suite']
+      temporary_line "* #{attributes['test']}"
     end
 
     def pass(attributes)
-      @output.puts "✔ #{attributes['test']}"
+      overwrite_temporary_line "✔ #{attributes['test']}"
     end
 
     def failure(attributes)
-      @output.puts "✘ #{attributes['test']}"
+      overwrite_temporary_line "✘ #{attributes['test']}"
+    end
+
+    def summarize(suite)
+      return if @summarized_suites.include?(suite)
+      puts suite
+      puts
+      @summarized_suites << suite
+    end
+
+    def temporary_line(line)
+      print line
+    end
+
+    def overwrite_temporary_line(line)
+      cr = "\r"
+      clear = "\e[0K"
+      puts cr + clear + line
+    end
+
+    def print(*args)
+      @output.print *args
+    end
+
+    def puts(*args)
+      @output.puts *args
     end
   end
 end
