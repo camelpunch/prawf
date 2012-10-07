@@ -16,7 +16,7 @@ describe "Prawf's minitest reporter" do
   end
 
   it "displays output nicely" do
-    system('ruby spec/end-end/fixtures/example_spec.rb')
+    system('ruby spec/end-end/fixtures/examplespec.rb')
 
     File.read(output.path).must_equal <<-OUTPUT
 My Class
