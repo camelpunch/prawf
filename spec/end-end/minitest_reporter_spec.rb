@@ -1,6 +1,7 @@
 # coding: utf-8
-require_relative '../spec_helper'
 require 'tempfile'
+require 'ansi/code'
+require_relative '../spec_helper'
 
 describe "Prawf's minitest reporter" do
   let(:output) { Tempfile.new('prawf output') }
@@ -23,12 +24,19 @@ describe "Prawf's minitest reporter" do
   }
 
   it "displays output nicely" do
-    system('ruby spec/end-end/fixtures/examplespec.rb --seed=1234')
+    2.times do
+      system('ruby spec/end-end/fixtures/examplespec.rb --seed=1234')
+    end
     File.read(output.path).must_equal <<-OUTPUT
 My Class
 
-* is awesome#{reset}✔ is awesome
-* can fail#{reset}✘ can fail
+* is awesome#{reset}#{ANSI.green { "✔" }} is awesome
+* can fail#{reset}#{ANSI.red { "✘" }} can fail
+
+My Class
+
+* is awesome#{reset}#{ANSI.green { "✔" }} is awesome
+* can fail#{reset}#{ANSI.red { "✘" }} can fail
     OUTPUT
   end
 end

@@ -24,6 +24,14 @@ module Prawf
       report 'failure', suite_name, test_name
     end
 
+    def before_suites(suites, type)
+      @output.puts JSON.generate(stage: 'before_suites')
+    end
+
+    def after_suites(suites, type)
+      @output.puts JSON.generate(stage: 'after_suites')
+    end
+
     private
 
     def report(event, suite_name, test_name)

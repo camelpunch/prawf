@@ -1,9 +1,12 @@
 # coding: utf-8
 require 'json'
 require 'set'
+require 'ansi/code'
+
 module Prawf
   class Parser
     def initialize(output)
+      @first_run = true
       @output = output
       @summarized_suites = Set.new
     end
@@ -22,11 +25,20 @@ module Prawf
     end
 
     def pass(attributes)
-      overwrite_temporary_line "✔ #{attributes['test']}"
+      overwrite_temporary_line "#{ANSI.green { "✔" }} #{attributes['test']}"
     end
 
     def failure(attributes)
-      overwrite_temporary_line "✘ #{attributes['test']}"
+      overwrite_temporary_line "#{ANSI.red { "✘" }} #{attributes['test']}"
+    end
+
+    def before_suites(*)
+      puts unless @first_run
+    end
+
+    def after_suites(*)
+      @first_run = false
+      @summarized_suites.clear
     end
 
     def summarize(suite)
