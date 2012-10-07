@@ -4,10 +4,10 @@
 pipe_path = ARGV[0]
 `mkfifo #{pipe_path}` unless File.exists?(pipe_path)
 
-File.open pipe_path, 'r' do |pipe|
+File.open pipe_path, 'r+' do |pipe|
   loop do
-    line = pipe.gets
-    puts line
+    $stdout.puts pipe.gets
+    $stdout.flush
   end
 end
 

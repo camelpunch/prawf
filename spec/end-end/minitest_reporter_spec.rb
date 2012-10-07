@@ -1,33 +1,24 @@
 # coding: utf-8
 require_relative '../spec_helper'
-require 'ansi/code'
+require 'tempfile'
 
 describe "Prawf's minitest reporter" do
-  def run_command(command)
-    @pipes ||= []
-    IO.popen(command, 'r').tap do |pipe|
-      @pipes << pipe
-    end
-  end
+  let(:output) { Tempfile.new('prawf output') }
 
   before do
-    @prawf_output = run_command('bin/prawf /tmp/prawfpipe')
+    File.unlink '/tmp/prawfpipe' rescue nil
+    @pid = Process.spawn('bin/prawf /tmp/prawfpipe',
+                         :out => output.path)
   end
 
   after do
-    Process.kill 'KILL', *@pipes.map(&:pid)
+    Process.kill 'KILL', @pid
   end
 
   it "displays output nicely" do
-    num_lines = 3
-    run_command 'ruby spec/end-end/fixtures/example_spec.rb'
+    system('ruby spec/end-end/fixtures/example_spec.rb')
 
-    lines = (1..num_lines).inject('') {|output, n|
-      output << @prawf_output.gets
-      output
-    }
-
-    lines.must_equal <<-OUTPUT
+    File.read(output.path).must_equal <<-OUTPUT
 My Class
 
 ✓ is awesome

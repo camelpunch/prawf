@@ -9,15 +9,7 @@ class Prawf
     include MiniTest::Reporter
 
     def initialize(pipe_path)
-      @pipe = File.open('/tmp/prawfpipe', 'w')
-    end
-
-    def before_suites(suites, type)
-      puts "# Running #{suites} #{type}s:"
-    end
-
-    def after_suites(suites, type)
-      @pipe.close
+      @pipe = File.open(pipe_path, 'w')
     end
 
     def before_test(suite, test)
