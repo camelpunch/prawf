@@ -15,15 +15,24 @@ module Prawf
     def parse(line)
       attributes = JSON.parse(line)
     rescue JSON::ParserError
-      @error_output.puts "Invalid JSON received: #{line}"
-      @error_output.flush
+      err "Invalid JSON received: #{line}"
     rescue TypeError
     else
-      send attributes.delete('stage'), attributes
-      @output.flush
+      stage = attributes['stage']
+      if stage
+        send stage, attributes
+        @output.flush
+      else
+        err "Invalid instruction received: #{line}"
+      end
     end
 
     private
+
+    def err(message)
+      @error_output.puts message
+      @error_output.flush
+    end
 
     def before_test(attributes)
       summarize attributes['suite']

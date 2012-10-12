@@ -37,6 +37,13 @@ Invalid JSON received: {
     OUTPUT
   end
 
+  it "outputs an error when given incomprehensible JSON" do
+    parser.parse '{ "foo": "bar" }'
+    error.must_equal <<-OUTPUT
+Invalid instruction received: { "foo": "bar" }
+    OUTPUT
+  end
+
   it "outputs a pass" do
     parse(stage: 'before_suites')
     parse(stage: 'before_test', suite: 'a suite', test: 'a test')
