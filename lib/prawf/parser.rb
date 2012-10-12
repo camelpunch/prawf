@@ -2,6 +2,7 @@
 require 'json'
 require 'set'
 require 'ansi/code'
+require_relative 'parsed_line'
 
 module Prawf
   class Parser
@@ -13,26 +14,15 @@ module Prawf
     end
 
     def parse(line)
-      attributes = JSON.parse(line)
-    rescue JSON::ParserError
-      err "Invalid JSON received: #{line}"
-    rescue TypeError
-    else
-      stage = attributes['stage']
-      if stage
-        send stage, attributes
-        @output.flush
-      else
-        err "Invalid instruction received: #{line}"
-      end
-    end
-
-    private
-
-    def err(message)
+      parsed_line = ParsedLine.new(line)
+      send parsed_line.stage, parsed_line.attributes
+      @output.flush
+    rescue ParsedLine::ParseError => e
       @error_output.puts message
       @error_output.flush
     end
+
+    private
 
     def before_test(attributes)
       summarize attributes['suite']
