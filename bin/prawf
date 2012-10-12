@@ -6,7 +6,7 @@ require 'prawf/parser'
 pipe_path = ARGV[0]
 `mkfifo #{pipe_path}` unless File.exists?(pipe_path)
 
-parser = Prawf::Parser.new($stdout)
+parser = Prawf::Parser.new($stdout, $stderr)
 
 File.open pipe_path, 'r+' do |pipe|
   loop do

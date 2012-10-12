@@ -3,14 +3,17 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/prawf/parser'
 
 describe Prawf::Parser do
-  attr_reader :pipe_output, :pipe_input
+  attr_reader :message_output, :message_input,
+    :error_output, :error_input
 
   before do
-    @pipe_output, @pipe_input = IO.pipe
+    @message_output, @message_input = IO.pipe
+    @error_output, @error_input = IO.pipe
   end
 
-  let(:parser) { Prawf::Parser.new(pipe_input) }
-  let(:output) { pipe_input.close; pipe_output.read }
+  let(:parser) { Prawf::Parser.new(message_input, error_input) }
+  let(:output) { message_input.close; message_output.read }
+  let(:error) { error_input.close; error_output.read }
 
   let(:reset) {
     cr = "\r"
@@ -20,6 +23,18 @@ describe Prawf::Parser do
 
   def parse(attributes)
     parser.parse JSON.generate(attributes)
+  end
+
+  it "copes with nil lines" do
+    parser.parse nil
+    output.must_equal ''
+  end
+
+  it "outputs an error when given invalid JSON" do
+    parser.parse '{'
+    error.must_equal <<-OUTPUT
+Invalid JSON received: {
+    OUTPUT
   end
 
   it "outputs a pass" do
@@ -80,6 +95,28 @@ repeated suite
 
 * a pass#{reset}#{ANSI.green { "✔" }} a pass
 * a fail#{reset}#{ANSI.red { "✘" }} a fail
+    OUTPUT
+  end
+
+  it "separates suites with newlines" do
+    parse(stage: 'before_suites')
+    parse(stage: 'before_test', suite: 'first suite', test: 'a pass')
+    parse(stage: 'pass', suite: 'repeated suite', test: 'a pass')
+    parse(stage: 'after_suites')
+
+    parse(stage: 'before_suites')
+    parse(stage: 'before_test', suite: 'second suite', test: 'a pass')
+    parse(stage: 'pass', suite: 'repeated suite', test: 'a pass')
+    parse(stage: 'after_suites')
+
+    output.must_equal <<-OUTPUT
+first suite
+
+* a pass#{reset}#{ANSI.green { "✔" }} a pass
+
+second suite
+
+* a pass#{reset}#{ANSI.green { "✔" }} a pass
     OUTPUT
   end
 end

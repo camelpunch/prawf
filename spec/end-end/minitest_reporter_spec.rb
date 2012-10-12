@@ -4,13 +4,14 @@ require 'ansi/code'
 require_relative '../spec_helper'
 
 describe "Prawf's minitest reporter" do
-  let(:output) { Tempfile.new('prawf output') }
+  let(:output) { Tempfile.new('prawf message output') }
+  let(:error_output) { Tempfile.new('prawf error output') }
 
   before do
     File.unlink '/tmp/prawfpipe' rescue nil
     @pid = Process.spawn('bin/prawf /tmp/prawfpipe',
                          :out => output.path,
-                         :err => output.path)
+                         :err => error_output.path)
   end
 
   after do

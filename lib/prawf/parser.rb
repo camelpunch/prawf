@@ -5,14 +5,20 @@ require 'ansi/code'
 
 module Prawf
   class Parser
-    def initialize(output)
+    def initialize(output, error_output)
       @first_run = true
       @output = output
+      @error_output = error_output
       @summarized_suites = Set.new
     end
 
     def parse(line)
       attributes = JSON.parse(line)
+    rescue JSON::ParserError
+      @error_output.puts "Invalid JSON received: #{line}"
+      @error_output.flush
+    rescue TypeError
+    else
       send attributes.delete('stage'), attributes
       @output.flush
     end
