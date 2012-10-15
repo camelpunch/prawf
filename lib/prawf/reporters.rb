@@ -12,6 +12,10 @@ module Prawf
       @output = output
     end
 
+    def before_suite(suite_name)
+      report 'before_suite', suite_name
+    end
+
     def before_test(suite_name, test_name)
       report 'before_test', suite_name, test_name
     end
@@ -34,12 +38,10 @@ module Prawf
 
     private
 
-    def report(event, suite_name, test_name)
-      @output.puts JSON.generate(
-        stage: event,
-        suite: suite_name,
-        test: test_name.sub(/^test_[0-9]+_/, '')
-      )
+    def report(event, suite_name, test_name = nil)
+      data = { stage: event, suite: suite_name }
+      data[:test] = test_name.sub(/^test_[0-9]+_/, '') if test_name
+      @output.puts JSON.generate(data)
     end
   end
 end

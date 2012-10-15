@@ -5,17 +5,16 @@ require_relative '../spec_helper'
 
 describe "Prawf's minitest reporter" do
   let(:output) { Tempfile.new('prawf message output') }
-  let(:error_output) { Tempfile.new('prawf error output') }
 
   before do
     File.unlink '/tmp/prawfpipe' rescue nil
     @pid = Process.spawn('bin/prawf /tmp/prawfpipe',
                          :out => output.path,
-                         :err => error_output.path)
+                         :err => $stderr)
   end
 
   after do
-    Process.kill 'KILL', @pid
+    Process.kill 'KILL', @pid if @pid
   end
 
   let(:reset) {
@@ -29,10 +28,13 @@ describe "Prawf's minitest reporter" do
       system('ruby spec/end-end/fixtures/examplespec.rb --seed=1234')
     end
     File.read(output.path).must_equal <<-OUTPUT
+MiniTest::Spec
+
 My Class
 
 * is awesome#{reset}#{ANSI.green { "✔" }} is awesome
 * can fail#{reset}#{ANSI.red { "✘" }} can fail
+MiniTest::Spec
 
 My Class
 

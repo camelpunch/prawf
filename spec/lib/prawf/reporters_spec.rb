@@ -15,6 +15,17 @@ describe Prawf::MiniTestReporter do
     @pipe_output, @pipe_input = IO.pipe
   end
 
+  it "writes before-suite data" do
+    reporter.before_suite('my suite')
+
+    expected_json = JSON.generate(
+      stage: 'before_suite',
+      suite: 'my suite'
+    )
+
+    output.must_equal "#{expected_json}\n"
+  end
+
   it "writes before-test data" do
     reporter.before_test('my suite', 'test_0002_my test')
 

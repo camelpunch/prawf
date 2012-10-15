@@ -2,15 +2,19 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 require 'json'
 require 'prawf/parser'
+require 'prawf/console_outputter'
 
 pipe_path = ARGV[0]
 `mkfifo #{pipe_path}` unless File.exists?(pipe_path)
 
-parser = Prawf::Parser.new($stdout, $stderr)
+parser = Prawf::Parser.new(
+  Prawf::ConsoleOutputter.new($stdout, $stderr)
+)
 
 File.open pipe_path, 'r+' do |pipe|
   loop do
     parser.parse pipe.gets
+    $stdout.flush
   end
 end
 
