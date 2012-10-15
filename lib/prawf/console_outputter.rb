@@ -18,8 +18,9 @@ module Prawf
       @output.puts status_of(test => [reset, check])
     end
 
-    def fail(test)
-      @output.puts status_of(test => [reset, cross])
+    def fail(test, message)
+      @output.puts status_of(test => [reset, cross]) +
+        "\n  " + message.gsub("\n", "\n  ") + "\n\n"
     end
 
     def error(text)

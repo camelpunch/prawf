@@ -34,12 +34,18 @@ My Class
 
 * is awesome#{reset}#{ANSI.green { "✔" }} is awesome
 * can fail#{reset}#{ANSI.red { "✘" }} can fail
+  Expected: false
+    Actual: true
+
 MiniTest::Spec
 
 My Class
 
 * is awesome#{reset}#{ANSI.green { "✔" }} is awesome
 * can fail#{reset}#{ANSI.red { "✘" }} can fail
+  Expected: false
+    Actual: true
+
     OUTPUT
   end
 end

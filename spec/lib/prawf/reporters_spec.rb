@@ -51,12 +51,17 @@ describe Prawf::MiniTestReporter do
   end
 
   it "writes failed test data" do
-    reporter.failure('my suite', 'test_0001_my test', unused_test_runner)
+    test_runner = MiniTest::TestRunner.new(
+      suite = nil, test = nil, assertions = nil, time = nil, result = nil,
+      exception = StandardError.new('bad things!')
+    )
+    reporter.failure('my suite', 'test_0001_my test', test_runner)
 
     expected_json = JSON.generate(
       stage: 'failure',
       suite: 'my suite',
-      test: 'my test'
+      test: 'my test',
+      message: 'bad things!'
     )
 
     output.must_equal "#{expected_json}\n"

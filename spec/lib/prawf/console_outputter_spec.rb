@@ -52,8 +52,13 @@ module Prawf
     it "shows a red X next to the description when a test fails" do
       test = Test.new('failing test', unused_suite)
       outputter.before_test(test)
-      outputter.fail(test)
-      output.must_equal "* failing test#{reset}#{ANSI.red { "✘" }} failing test\n"
+      outputter.fail(test, "went totally\nwrong!")
+      output.must_equal <<-OUTPUT
+* failing test#{reset}#{ANSI.red { "✘" }} failing test
+  went totally
+  wrong!
+
+      OUTPUT
     end
   end
 end

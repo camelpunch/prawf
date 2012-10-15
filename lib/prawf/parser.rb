@@ -48,7 +48,7 @@ module Prawf
     end
 
     def failure(attributes)
-      @outputter.fail(@current_test)
+      @outputter.fail(@current_test, attributes['message'])
     end
   end
 end

@@ -25,7 +25,8 @@ module Prawf
     end
 
     def failure(suite_name, test_name, test_runner)
-      report 'failure', suite_name, test_name
+      report 'failure', suite_name, test_name,
+        test_runner.exception.message
     end
 
     def before_suites(suites, type)
@@ -38,10 +39,11 @@ module Prawf
 
     private
 
-    def report(event, suite_name = nil, test_name = nil)
+    def report(event, suite_name = nil, test_name = nil, message = nil)
       data = { stage: event }
       data[:suite] = suite_name if suite_name
       data[:test] = test_name.sub(/^test_[0-9]+_/, '') if test_name
+      data[:message ] = message if message
       @output.puts JSON.generate(data)
       @output.flush
     end

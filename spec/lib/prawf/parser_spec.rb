@@ -100,8 +100,10 @@ module Prawf
       parse(stage: 'before_test', suite: 'a suite', test: 'a test')
 
       expected_test = Test.new('a test', Suite.new('a suite'))
-      mock(outputter).fail(expected_test)
-      parse(stage: 'failure', suite: 'a suite', test: 'a test')
+      message = "should be true\ngot false!"
+      mock(outputter).fail(expected_test, message)
+      parse(stage: 'failure', suite: 'a suite', test: 'a test',
+            message: message)
 
       parse(stage: 'after_suites')
     end
