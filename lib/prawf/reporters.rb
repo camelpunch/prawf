@@ -29,19 +29,21 @@ module Prawf
     end
 
     def before_suites(suites, type)
-      @output.puts JSON.generate(stage: 'before_suites')
+      report 'before_suites'
     end
 
     def after_suites(suites, type)
-      @output.puts JSON.generate(stage: 'after_suites')
+      report 'after_suites'
     end
 
     private
 
-    def report(event, suite_name, test_name = nil)
-      data = { stage: event, suite: suite_name }
+    def report(event, suite_name = nil, test_name = nil)
+      data = { stage: event }
+      data[:suite] = suite_name if suite_name
       data[:test] = test_name.sub(/^test_[0-9]+_/, '') if test_name
       @output.puts JSON.generate(data)
+      @output.flush
     end
   end
 end

@@ -1,18 +1,18 @@
 # coding: utf-8
+require 'tempfile'
+require 'json'
 require_relative '../../spec_helper'
 require_relative '../../../lib/prawf/reporters'
-require 'json'
 
 describe Prawf::MiniTestReporter do
-  attr_reader :pipe_output, :pipe_input
   let(:unused_test_runner) { nil }
   let(:unused_suites) { nil }
   let(:unused_type) { nil }
-  let(:reporter) { Prawf::MiniTestReporter.new(pipe_input) }
-  let(:output) { pipe_input.close; pipe_output.read }
+  let(:reporter) { Prawf::MiniTestReporter.new(@file) }
+  let(:output) { File.read(@file.path) }
 
   before do
-    @pipe_output, @pipe_input = IO.pipe
+    @file = Tempfile.new('reporter test')
   end
 
   it "writes before-suite data" do
