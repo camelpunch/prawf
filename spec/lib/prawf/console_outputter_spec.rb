@@ -52,11 +52,27 @@ module Prawf
     it "shows a red X next to the description when a test fails" do
       test = Test.new('failing test', unused_suite)
       outputter.before_test(test)
-      outputter.fail(test, "went totally\nwrong!")
+      outputter.fail(test, "went totally\nwrong!", backtrace = [])
       output.must_equal <<-OUTPUT
 * failing test#{reset}#{ANSI.red { "✘" }} failing test
   went totally
   wrong!
+
+
+      OUTPUT
+    end
+
+    it "shows backtraces" do
+      test = Test.new('failing test', unused_suite)
+      outputter.before_test(test)
+      outputter.fail(test, "went totally\nwrong!",
+                     ['some backtrace', 'for you'])
+      output.must_equal <<-OUTPUT
+* failing test#{reset}#{ANSI.red { "✘" }} failing test
+  went totally
+  wrong!
+  some backtrace
+  for you
 
       OUTPUT
     end

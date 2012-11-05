@@ -5,7 +5,9 @@ require 'minitest/reporters'
 require_relative '../../../lib/prawf/reporters'
 
 MiniTest::Reporters.use!(
-  Prawf::MiniTestReporter.new(File.open('/tmp/prawfpipe', 'w+'))
+  Prawf::MiniTestReporter.new(
+    File.open('/tmp/prawfpipe', 'w+')
+  )
 )
 
 describe "My Class" do

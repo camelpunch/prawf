@@ -101,9 +101,10 @@ module Prawf
 
       expected_test = Test.new('a test', Suite.new('a suite'))
       message = "should be true\ngot false!"
-      mock(outputter).fail(expected_test, message)
+      backtrace = ['a backtrace']
+      mock(outputter).fail(expected_test, message, backtrace)
       parse(stage: 'failure', suite: 'a suite', test: 'a test',
-            message: message)
+            message: message, backtrace: backtrace)
 
       parse(stage: 'after_suites')
     end

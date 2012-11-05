@@ -50,10 +50,19 @@ describe Prawf::MiniTestReporter do
     output.must_equal "#{expected_json}\n"
   end
 
-  it "writes failed test data" do
+  it "writes failed test data with filtered backtraces" do
+    exception = StandardError.new('bad things!')
+    def exception.backtrace
+      [
+        'some backtrace',
+        'for you',
+        '/lib/minitest/some/path',
+      ]
+    end
+
     test_runner = MiniTest::TestRunner.new(
       suite = nil, test = nil, assertions = nil, time = nil, result = nil,
-      exception = StandardError.new('bad things!')
+      exception
     )
     reporter.failure('my suite', 'test_0001_my test', test_runner)
 
@@ -61,7 +70,8 @@ describe Prawf::MiniTestReporter do
       stage: 'failure',
       suite: 'my suite',
       test: 'my test',
-      message: 'bad things!'
+      message: 'bad things!',
+      backtrace: ['some backtrace', 'for you']
     )
 
     output.must_equal "#{expected_json}\n"

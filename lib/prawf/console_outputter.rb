@@ -18,9 +18,11 @@ module Prawf
       @output.puts status_of(test => [reset, check])
     end
 
-    def fail(test, message)
-      @output.puts status_of(test => [reset, cross]) +
-        "\n  " + message.gsub("\n", "\n  ") + "\n\n"
+    def fail(test, message, backtrace)
+      @output.puts status_of(test => [reset, cross]) + "\n  " +
+        message.gsub("\n", "\n  ") + "\n" +
+        formatted_backtrace(backtrace) +
+        "\n\n"
     end
 
     def error(text)
@@ -28,6 +30,11 @@ module Prawf
     end
 
     private
+
+    def formatted_backtrace(backtrace)
+      return '' if backtrace.empty?
+      "  " + backtrace.join("\n  ")
+    end
 
     def status_of(options)
       test = options.keys.first

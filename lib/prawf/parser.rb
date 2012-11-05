@@ -21,7 +21,7 @@ module Prawf
       if stage
         send stage, attributes
       else
-        @outputter.error "Invalid instruction received: #{line}"
+        @outputter.error("Invalid instruction received: #{line}")
       end
     end
 
@@ -48,7 +48,7 @@ module Prawf
     end
 
     def failure(attributes)
-      @outputter.fail(@current_test, attributes['message'])
+      @outputter.fail(@current_test, attributes['message'], attributes['backtrace'])
     end
   end
 end
